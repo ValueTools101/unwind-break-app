@@ -27,11 +27,6 @@
       "infoPlist": {
         "NSMicrophoneUsageDescription": "Unwind uses your microphone only in Speak mode, so you can vent out loud. Recordings stay on your device unless you choose to save them."
       }
-    },
-    "extra": {
-      "eas": {
-        "projectId": "REPLACE_WITH_YOUR_EAS_PROJECT_ID"
-      }
     }
   }
 }

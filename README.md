@@ -57,6 +57,10 @@ review the licensing terms of whatever generator you pick.
   mode
 - `PRIVACY_POLICY.md` drafted to match exactly what the app does (no accounts, on-device
   only, no ads/analytics yet)
+- `assets/icon.png`, `assets/adaptive-icon.png`, `assets/splash.png` — an original
+  breathing-circle-and-bubbles mark, generated from the SVGs in `assets/source/` (no stock
+  art, no AI image generator, nothing to license). Swap these for your own branding anytime
+  — see `assets/source/README.md` for how they were made and how to regenerate.
 
 ## ⚠️ What I could not do from here (needs your own accounts, or a real device)
 
@@ -67,26 +71,23 @@ so **none of this has been run** — only written and carefully reasoned through
    (aligns dependency versions to the Expo SDK), then `npx expo start` — scan the QR code
    with Expo Go on your phone. Test every mode, especially microphone recording (Speak tab)
    and the ambient sound mixer, on a real device before building anything.
-2. **Replace the placeholder assets.** There is no `/assets` folder yet — you'll need a
-   1024×1024 icon, an adaptive icon, and a splash image at `assets/icon.png`,
-   `assets/adaptive-icon.png`, `assets/splash.png` (referenced in `app.json`).
-3. **Create an [Expo/EAS account](https://expo.dev)** (free) and run `eas init` in this
+2. **Create an [Expo/EAS account](https://expo.dev)** (free) and run `eas init` in this
    folder to fill in the real `projectId` in `app.json`.
-4. **Fill in the `[FILL IN...]` placeholders** in `PRIVACY_POLICY.md` — your name/company,
+3. **Fill in the `[FILL IN...]` placeholders** in `PRIVACY_POLICY.md` — your name/company,
    contact email, and today's date.
-5. **Register a [Google Play Developer account](https://play.google.com/console/signup)**
+4. **Register a [Google Play Developer account](https://play.google.com/console/signup)**
    — $25 one-time fee, if you haven't already from the cycle planner app.
-6. **Host `PRIVACY_POLICY.md` at a public URL** (GitHub Pages is free) — Play Console
+5. **Host `PRIVACY_POLICY.md` at a public URL** (GitHub Pages is free) — Play Console
    requires a live link.
-7. **Build the release bundle:**
+6. **Build the release bundle:**
    ```bash
    npm install -g eas-cli
    eas login
    eas build --platform android --profile production
    ```
-8. **Create the Play Console listing** — title, description, screenshots, content rating,
+7. **Create the Play Console listing** — title, description, screenshots, content rating,
    and the Data Safety form (see below).
-9. **Closed testing first**, same as any new personal developer account: 20+ testers for
+8. **Closed testing first**, same as any new personal developer account: 20+ testers for
    14 days before Google grants production access.
 
 ## Data Safety form — how to answer it

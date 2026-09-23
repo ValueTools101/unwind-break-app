@@ -36,35 +36,77 @@ function makeBrownNoise(numSamples) {
   return out;
 }
 
-function makeRainTexture(numSamples, sampleRate) {
+// Deep, smooth, slow-swelling rumble — deliberately free of any crackle or hiss so it
+// reads as unmistakably different from Rain and Soft Wind.
+function makeDeepHum(numSamples, sampleRate) {
   const brown = makeBrownNoise(numSamples);
-  const pink = makePinkNoise(numSamples);
   const out = new Float32Array(numSamples);
   for (let i = 0; i < numSamples; i++) {
     const t = i / sampleRate;
-    const envelope = 0.6 + 0.4 * Math.sin(2 * Math.PI * 0.07 * t + Math.sin(t * 0.3));
-    out[i] = brown[i] * 0.5 + pink[i] * 0.9 * envelope;
+    const swell = 0.75 + 0.25 * Math.sin(2 * Math.PI * 0.045 * t);
+    out[i] = brown[i] * swell * 0.9;
   }
   return out;
 }
 
+// Soft wash plus sparse high-pitched droplet "ticks" — the transients are what make this
+// unmistakably rain rather than generic noise.
+function makeRainTexture(numSamples, sampleRate) {
+  const pink = makePinkNoise(numSamples);
+  const out = new Float32Array(numSamples);
+  for (let i = 0; i < numSamples; i++) {
+    const t = i / sampleRate;
+    const envelope = 0.5 + 0.3 * Math.sin(2 * Math.PI * 0.09 * t + Math.sin(t * 0.4));
+    out[i] = pink[i] * 0.6 * envelope;
+  }
+  addRainDroplets(out, sampleRate);
+  return out;
+}
+
+function addRainDroplets(buffer, sampleRate) {
+  const blockSize = Math.floor(sampleRate * 0.02);
+  for (let i = 0; i < buffer.length; i += blockSize) {
+    if (Math.random() < 0.35) {
+      const dropletLen = Math.floor(sampleRate * (0.02 + Math.random() * 0.035));
+      const freq = 1600 + Math.random() * 1600;
+      for (let j = 0; j < dropletLen && i + j < buffer.length; j++) {
+        const t = j / sampleRate;
+        const env = Math.exp(-t * 45);
+        buffer[i + j] += Math.sin(2 * Math.PI * freq * t) * env * 0.3;
+      }
+    }
+  }
+}
+
+// Airy, high-pass-leaning noise with slow gusts — no droplets, no deep rumble, so it sits
+// clearly apart from Rain and Deep Hum.
 function makeWind(numSamples, sampleRate) {
   const pink = makePinkNoise(numSamples);
   const out = new Float32Array(numSamples);
+  let runningAvg = 0;
   for (let i = 0; i < numSamples; i++) {
+    runningAvg = runningAvg * 0.985 + pink[i] * 0.015;
+    const airy = pink[i] - runningAvg;
     const t = i / sampleRate;
-    const gust = 0.5 + 0.5 * Math.sin(2 * Math.PI * 0.05 * t) * Math.sin(2 * Math.PI * 0.013 * t + 1.3);
-    out[i] = pink[i] * (0.4 + 0.6 * Math.max(0, gust));
+    const gust = 0.45 + 0.55 * Math.max(0, Math.sin(2 * Math.PI * 0.035 * t) * Math.sin(2 * Math.PI * 0.011 * t + 1.3));
+    out[i] = airy * (0.5 + gust) * 1.4;
   }
   return out;
 }
 
-function makeTone(numSamples, sampleRate, freq) {
+// A clear, singing-bowl-like tone. Frequency chosen to sit well within a phone speaker's
+// range (low sine waves under ~150Hz are often nearly inaudible on small speakers).
+function makeTone(numSamples, sampleRate, freq, { bright = false } = {}) {
   const out = new Float32Array(numSamples);
   for (let i = 0; i < numSamples; i++) {
     const t = i / sampleRate;
-    const breathe = 0.75 + 0.25 * Math.sin(2 * Math.PI * 0.1 * t);
-    out[i] = Math.sin(2 * Math.PI * freq * t) * 0.5 * breathe;
+    const breathe = 0.7 + 0.3 * Math.sin(2 * Math.PI * 0.08 * t);
+    let v = Math.sin(2 * Math.PI * freq * t) * 0.6;
+    v += Math.sin(2 * Math.PI * freq * 2 * t) * 0.15; // octave overtone for warmth
+    if (bright) {
+      v += Math.sin(2 * Math.PI * freq * 3 * t) * (0.08 + 0.05 * Math.sin(2 * Math.PI * 0.3 * t)); // shimmer
+    }
+    out[i] = v * breathe * 0.55;
   }
   return out;
 }
@@ -120,7 +162,7 @@ function generatorFor(id) {
       return s;
     }
     case 'brown': {
-      const s = makeBrownNoise(n);
+      const s = makeDeepHum(n, SAMPLE_RATE);
       applyFadeEdges(s, SAMPLE_RATE);
       return s;
     }
@@ -130,9 +172,9 @@ function generatorFor(id) {
       return s;
     }
     case 'tone-low':
-      return makeTone(n, SAMPLE_RATE, 110);
+      return makeTone(n, SAMPLE_RATE, 196);
     case 'tone-mid':
-      return makeTone(n, SAMPLE_RATE, 220);
+      return makeTone(n, SAMPLE_RATE, 440, { bright: true });
     case 'pop':
       return makePop(SAMPLE_RATE);
     case 'chime':
@@ -194,7 +236,10 @@ function uint8ToBase64(bytes) {
   return parts.join('');
 }
 
-const SOUND_DIR = FileSystem.cacheDirectory + 'unwind-sounds/';
+// Bumping this invalidates any previously cached (older, less-distinct) sound files on a
+// device that already ran an earlier version of this app.
+const CACHE_VERSION = 'v2';
+const SOUND_DIR = FileSystem.cacheDirectory + 'unwind-sounds-' + CACHE_VERSION + '/';
 
 export async function getSoundFileUri(id) {
   const dirInfo = await FileSystem.getInfoAsync(SOUND_DIR);

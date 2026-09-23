@@ -7,6 +7,17 @@ const KEYS = {
   STATS: 'unwind:stats',
 };
 
+// Set by cloudSync.js at startup so every local write can also mirror to Firestore when
+// signed in, without storage.js importing cloudSync.js (which would create a circular
+// import, since cloudSync.js itself reads/writes through this module).
+let onLocalChange = null;
+export function setOnLocalChangeHandler(fn) {
+  onLocalChange = fn;
+}
+function notifyChanged() {
+  if (onLocalChange) onLocalChange();
+}
+
 async function readJson(key, fallback) {
   try {
     const raw = await AsyncStorage.getItem(key);
@@ -29,6 +40,7 @@ export async function addJournalEntry({ text, mood }) {
   const entry = { id: Date.now().toString(), text, mood, createdAt: new Date().toISOString() };
   const next = [entry, ...entries];
   await writeJson(KEYS.JOURNAL, next);
+  notifyChanged();
   return next;
 }
 
@@ -36,7 +48,13 @@ export async function deleteJournalEntry(id) {
   const entries = await getJournalEntries();
   const next = entries.filter((e) => e.id !== id);
   await writeJson(KEYS.JOURNAL, next);
+  notifyChanged();
   return next;
+}
+
+export async function replaceJournalEntries(entries) {
+  await writeJson(KEYS.JOURNAL, entries);
+  return entries;
 }
 
 export async function getCart() {
@@ -55,12 +73,19 @@ export async function setCartItemQty(productId, qty) {
       : [...cart, { id: productId, qty }];
   }
   await writeJson(KEYS.CART, next);
+  notifyChanged();
   return next;
 }
 
 export async function clearCart() {
   await writeJson(KEYS.CART, []);
+  notifyChanged();
   return [];
+}
+
+export async function replaceCart(cart) {
+  await writeJson(KEYS.CART, cart);
+  return cart;
 }
 
 export async function getSavedRants() {
@@ -91,5 +116,11 @@ export async function addRelaxedSeconds(seconds) {
   const stats = await getStats();
   const next = { ...stats, totalRelaxedSeconds: stats.totalRelaxedSeconds + seconds };
   await writeJson(KEYS.STATS, next);
+  notifyChanged();
   return next.totalRelaxedSeconds;
+}
+
+export async function replaceStats(stats) {
+  await writeJson(KEYS.STATS, stats);
+  return stats;
 }

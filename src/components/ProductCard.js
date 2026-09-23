@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { colors, radii, spacing } from '../theme';
+import { colors, radii, spacing, shadow } from '../theme';
+import { formatPrice } from '../utils/currency';
 
-export default function ProductCard({ product, qty, onAdd, onIncrease, onDecrease }) {
+export default function ProductCard({ product, qty, onAdd, onIncrease, onDecrease, style }) {
   return (
-    <View style={[styles.card, { backgroundColor: product.color }]}>
+    <View style={[styles.card, { backgroundColor: product.color }, style]}>
       <Text style={styles.emoji}>{product.emoji}</Text>
       <Text style={styles.name} numberOfLines={2}>{product.name}</Text>
-      <Text style={styles.price}>${product.price}</Text>
+      <Text style={styles.price}>{formatPrice(product.price)}</Text>
       {qty > 0 ? (
         <View style={styles.stepper}>
           <Pressable onPress={onDecrease} style={styles.stepBtn}><Text style={styles.stepTxt}>-</Text></Pressable>
@@ -24,7 +25,7 @@ export default function ProductCard({ product, qty, onAdd, onIncrease, onDecreas
 }
 
 const styles = StyleSheet.create({
-  card: { flex: 1, borderRadius: radii.lg, padding: spacing.md, margin: spacing.xs, minHeight: 170, justifyContent: 'space-between' },
+  card: { flex: 1, borderRadius: radii.lg, padding: spacing.md, margin: spacing.xs, minHeight: 170, justifyContent: 'space-between', ...shadow.sm },
   emoji: { fontSize: 36 },
   name: { fontSize: 14, fontWeight: '700', color: colors.textOnLight, marginTop: spacing.sm },
   price: { fontSize: 13, color: colors.textMuted, marginTop: 2 },

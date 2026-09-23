@@ -5,29 +5,40 @@ _Last updated: [FILL IN DATE]_
 Unwind ("the app") is developed by [FILL IN YOUR NAME / COMPANY]. This policy explains what
 data the app handles and how.
 
-## No account, no sign-in
+## Account is optional
 
-Unwind does not require you to create an account, sign in, or provide any personal
-identifying information to use it.
+Unwind does not require you to create an account or sign in to use it. Every feature —
+breathing exercises, games, journaling, voice venting, window shopping, and jokes — works
+fully without one. Signing in with email/password or Google is available only if you want
+your journal, cart, and progress to follow you to a new device.
 
-## What the app stores, and where
+## If you don't sign in
 
-Everything you create in Unwind — journal entries, voice recordings, and your shopping
-cart — is stored **only on your device**, using local on-device storage. None of it is
-transmitted to us, to any third party, or to any server. We do not operate a backend for
-this app.
+Everything you create — journal entries, voice recordings, and your shopping cart — is
+stored **only on your device**, using local on-device storage. None of it is transmitted to
+us, to any third party, or to any server.
 
-- **Journal entries** (text you write in the "Write" tab) stay on-device until you delete them.
-- **Voice recordings** ("Speak" tab) are, by default, deleted the moment you tap "Delete &
-  Release." If you tap "Save this one" instead, the recording is kept on-device until you
-  delete it yourself.
-- **Shopping cart** (Window Shop mode) is a local, pretend cart with no real products,
-  payment processing, or checkout of any kind. It exists only for entertainment.
+## If you do sign in
+
+We use Firebase (a Google service) for authentication and to store the following, scoped to
+your account, so it can sync across your devices:
+- Journal entries (text and mood tags you write in the "Write" tab)
+- Your shopping cart contents (Window Shop mode)
+- Your all-time "minutes unwound" statistic
+
+This data is used solely to provide the sync feature for your own account and is not sold,
+shared with advertisers, or used for any purpose beyond making your data available to you
+across devices. **Voice recordings are never uploaded, signed in or not** — they always stay
+on-device only.
+
+Signing in with Google uses Google's own sign-in flow; we receive only the basic profile
+information (name, email) needed to create your account.
 
 ## Microphone access
 
 The app requests microphone permission solely so the "Speak" mode can record your voice
-locally. Recordings are never uploaded or analyzed by us or any third party.
+locally. Recordings are never uploaded or analyzed by us or any third party, regardless of
+whether you're signed in.
 
 ## Ambient sounds
 
@@ -37,24 +48,29 @@ streamed, or recorded from any external source.
 
 ## No ads, no analytics, no tracking (currently)
 
-As shipped, this app does not include advertising SDKs, analytics SDKs, or any other
-third-party tracking. If that changes in a future version, this policy will be updated
-first.
+As shipped, this app does not include advertising SDKs or analytics/tracking SDKs beyond
+Firebase Authentication and Firestore (used only for the optional sync feature described
+above). If that changes in a future version, this policy will be updated first.
 
 ## Children's privacy
 
 Unwind is not directed at children under 13 and does not knowingly collect information
-from them (it does not collect information from anyone, since nothing leaves the device).
+from them.
 
 ## Data deletion
 
-Because nothing is stored off-device, deleting the app deletes all of your data. You can
-also delete individual journal entries or recordings at any time from within the app.
+- Without an account: uninstalling the app deletes all of your data, since nothing is
+  stored off-device. You can also delete individual journal entries or recordings at any
+  time from within the app.
+- With an account: deleting individual entries/recordings works the same way. The
+  Profile screen's "Delete Account" button deletes your sign-in account; your local,
+  on-device data is unaffected by that action (it remains on the device you delete the
+  account from, but is no longer synced to any other device).
 
 ## Changes to this policy
 
-If this app's data practices ever change (for example, adding cloud sync or ads), this
-policy will be updated and the in-app version will be revised to match.
+If this app's data practices ever change (for example, adding ads or a new data type to
+sync), this policy will be updated and the in-app version will be revised to match.
 
 ## Contact
 

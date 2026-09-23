@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Audio } from 'expo-av';
 import Header from '../components/Header';
 import BreathingCircle from '../components/BreathingCircle';
+import AmbientBackground from '../components/AmbientBackground';
 import SoundTile from '../components/SoundTile';
 import PrimaryButton from '../components/PrimaryButton';
 import { colors, spacing, radii } from '../theme';
@@ -22,6 +23,9 @@ export default function BreatheScreen({ onBack }) {
   const totalElapsedRef = useRef(0);
 
   const pattern = BREATH_PATTERNS.find((p) => p.id === patternId);
+  const activeVisuals = Object.keys(activeSounds)
+    .map((id) => SOUND_PRESETS.find((s) => s.id === id)?.visual)
+    .filter(Boolean);
 
   useEffect(() => {
     return () => {
@@ -78,6 +82,7 @@ export default function BreatheScreen({ onBack }) {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={[colors.background, colors.primarySoft]} style={StyleSheet.absoluteFill} />
+      <AmbientBackground activeVisuals={activeVisuals} />
       <Header title="Breathe & Sounds" onBack={onBack} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.patternRow}>

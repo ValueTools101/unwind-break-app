@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { colors, radii } from '../theme';
+import { colors, radii, shadow } from '../theme';
 
 const VARIANTS = {
   primary: { bg: colors.primary, fg: '#FFFFFF' },
@@ -19,6 +19,7 @@ export default function PrimaryButton({ label, onPress, variant = 'primary', dis
         styles.btn,
         { backgroundColor: v.bg, opacity: disabled ? 0.5 : pressed ? 0.85 : 1 },
         variant === 'secondary' && styles.secondaryBorder,
+        (variant === 'primary' || variant === 'danger') && shadow.sm,
       ]}
     >
       {loading ? <ActivityIndicator color={v.fg} /> : <Text style={[styles.label, { color: v.fg }]}>{label}</Text>}

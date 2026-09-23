@@ -3,16 +3,16 @@ import { View, Text, StyleSheet, Dimensions, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Audio } from 'expo-av';
-import Bubble from '../components/Bubble';
-import Header from '../components/Header';
-import { colors } from '../theme';
-import { getSoundFileUri } from '../utils/audioSynth';
-import { addRelaxedSeconds } from '../utils/storage';
+import Bubble from '../../components/Bubble';
+import Header from '../../components/Header';
+import { colors } from '../../theme';
+import { getSoundFileUri } from '../../utils/audioSynth';
+import { addRelaxedSeconds } from '../../utils/storage';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 const BUBBLE_COLORS = ['#A7C7E7', '#B5EAD7', '#C7CEEA', '#FFDAC1', '#E2F0CB'];
 
-export default function GameScreen({ onBack }) {
+export default function BubblePopScreen({ onBack }) {
   const [bubbles, setBubbles] = useState([]);
   const [popped, setPopped] = useState(0);
   const [running, setRunning] = useState(true);
